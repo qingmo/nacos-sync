@@ -84,10 +84,21 @@ echo "nacos-sync is starting，you can check the ${BASE_DIR}/logs/nacos-sync-sta
 
 }
 
+docker_start(){
+
+echo "$JAVA ${JAVA_OPT}" > ${BASE_DIR}/logs/nacos-sync-start.out 2>&1
+$JAVA ${JAVA_OPT} >> ${BASE_DIR}/logs/nacos-sync-start.out 2>&1
+echo "nacos-sync is starting，you can check the ${BASE_DIR}/logs/nacos-sync-start.out"
+
+}
+
 
 case "$ACTION" in
     start)
         start
+    ;;
+    dockerstart)
+        docker_start
     ;;
     *)
         usage
