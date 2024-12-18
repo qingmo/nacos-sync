@@ -189,16 +189,13 @@ public class ConfigSyncNacosToNacosServiceImpl implements ConfigSyncService, Ini
 
                 @Override
                 public void receiveConfigChange(ConfigChangeEvent configChangeEvent) {
-                    for (ConfigChangeItem changeItem : configChangeEvent.getChangeItems()) {
-                        log.info("Detected changes in config information, taskId: {}, key:{}, oldContent:{}, newContent:{} initiating synchronization",
-                                taskId, changeItem.getKey(), changeItem.getOldValue(), changeItem.getNewValue());
-                        try {
-                            doSync(taskId, configTaskDO, sourceConfigService, destConfigService);
-                            log.info("Detected synchronization end for config information {}", taskId);
-                        } catch (Exception e) {
-                            log.error("config process fail, taskId:{}", taskId, e);
-                            metricsManager.recordError(MetricsStatisticsType.SYNC_CONFIG_ERROR);
-                        }
+                    log.info("Detected changes in config information, taskId: {}, do sync", taskId);
+                    try {
+                        doSync(taskId, configTaskDO, sourceConfigService, destConfigService);
+                        log.info("Detected synchronization end for config information {}", taskId);
+                    } catch (Exception e) {
+                        log.error("config process fail, taskId:{}", taskId, e);
+                        metricsManager.recordError(MetricsStatisticsType.SYNC_CONFIG_ERROR);
                     }
                 }
             });
