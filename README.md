@@ -138,15 +138,16 @@ In the bin folder, application.properties:
 ``` xml
 
 spring.datasource.url=jdbc:mysql://127.0.0.1:3306/nacos_sync?characterEncoding=utf8
-spring.datasource.username=root
-spring.datasource.password=root
+spring.datasource.username=${LOCAL_NACOS_DB_USERNAME}
+spring.datasource.password=${LOCAL_NACOS_DB_PWD}
 
 ```
 
 ## Start Server
 
 ``` xml
-
+$ export LOCAL_NACOS_DB_USERNAME=root
+$ export LOCAL_NACOS_DB_PWD=root
 $ nacosSync/bin:
 sh startup.sh  start
 
