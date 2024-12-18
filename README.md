@@ -80,6 +80,7 @@ Before you begin, install the following:
 - 64bit JDK 17+: downloads, JAVA_HOME settings.
 - Maven 3.5.2+: [downloads](https://maven.apache.org/download.cgi), [settings](https://maven.apache.org/settings.html).
 - MySql 5.6.+
+- Python 2.7
 
 ## Download & Build From Release
 

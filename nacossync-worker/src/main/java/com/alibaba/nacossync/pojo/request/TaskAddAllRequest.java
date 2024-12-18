@@ -35,7 +35,9 @@ public class TaskAddAllRequest extends BaseRequest {
      * eg: bbdad57833a0e4f0981f6f3349005617 .
      */
     private String destClusterId;
-    
+
+    private String group;
+
     /**
      * whether to exclude subscriber.
      */
