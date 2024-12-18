@@ -20,7 +20,6 @@
     <modules>
         <module>nacossync-console</module>
         <module>nacossync-worker</module>
-        <module>nacossync-test</module>
         <module>nacossync-distribution</module>
     </modules>
     <packaging>pom</packaging>
