@@ -16,12 +16,11 @@
  */
 package com.alibaba.nacossync.template;
 
-import com.alibaba.nacossync.monitor.MetricsManager;
-import lombok.extern.slf4j.Slf4j;
-
 import com.alibaba.nacossync.exception.SkyWalkerException;
-import com.alibaba.nacossync.pojo.result.BaseResult;
 import com.alibaba.nacossync.pojo.request.BaseRequest;
+import com.alibaba.nacossync.pojo.result.BaseResult;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author NacosSync

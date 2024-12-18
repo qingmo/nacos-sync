@@ -28,4 +28,5 @@ import com.alibaba.nacossync.pojo.model.SystemConfigDO;
 public interface SystemConfigRepository extends CrudRepository<SystemConfigDO, Integer>,
                                        JpaSpecificationExecutor<SystemConfigDO> {
 
+    SystemConfigDO findByConfigKey(String configKey);
 }

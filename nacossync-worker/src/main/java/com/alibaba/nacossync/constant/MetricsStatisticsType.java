@@ -26,7 +26,16 @@ public enum MetricsStatisticsType {
 
     SYNC_ERROR("nacosSync.sync.task.error", "所有同步执行时的异常"),
 
-    DELETE_ERROR("nacosSync.delete.task.error", "所有删除同步执行时的异常");
+    DELETE_ERROR("nacosSync.delete.task.error", "所有删除同步执行时的异常"),
+
+    SYNC_CONFIG_TASK_RT("nacosSync.add.config.task.rt", "同步配置任务执行耗时"),
+
+    DELETE_CONFIG_TASK_RT("nacosSync.delete.config.task.rt", "删除配置任务耗时"),
+
+    SYNC_CONFIG_ERROR("nacosSync.sync.config.task.error", "所有配置同步执行时的异常"),
+
+    DELETE_CONFIG_ERROR("nacosSync.delete.config.task.error", "所有删除配置同步执行时的异常"),
+    ;
 
     /**
      * metricsName
@@ -36,5 +45,5 @@ public enum MetricsStatisticsType {
     MetricsStatisticsType(String code, String desc) {
         this.metricsName = code;
     }
-    
+
 }

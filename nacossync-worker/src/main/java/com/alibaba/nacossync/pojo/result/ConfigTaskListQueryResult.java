@@ -14,18 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alibaba.nacossync.pojo;
+package com.alibaba.nacossync.pojo.result;
+
+import com.alibaba.nacossync.pojo.view.ConfigTaskModel;
+import com.alibaba.nacossync.pojo.view.TaskModel;
+
+import java.util.List;
 
 import lombok.Data;
 
 /**
  * @author NacosSync
- * @version $Id: QueryCondition.java, v 0.1 2018年11月06日 AM11:03 NacosSync Exp $
+ * @version $Id: TaskListResult.java, v 0.1 2018-09-30 PM12:50 NacosSync Exp $$
  */
 @Data
-public class QueryCondition {
-    private Integer id;
-    private String  serviceName;
-    private String  dataId;
-    private String  clusterName;
+public class ConfigTaskListQueryResult extends BaseResult {
+    private List<ConfigTaskModel> taskModels;
+    private Integer         totalPage;
+    private Long            totalSize;
+    private Integer         currentSize;
 }

@@ -18,10 +18,15 @@
 package com.alibaba.nacossync.timer;
 
 import com.alibaba.nacossync.cache.SkyWalkerCacheServices;
+import com.alibaba.nacossync.constant.SkyWalkerConstants;
+import com.alibaba.nacossync.dao.ConfigTaskAccessService;
+import com.alibaba.nacossync.dao.SystemConfigAccessService;
 import com.alibaba.nacossync.dao.TaskAccessService;
 import com.alibaba.nacossync.pojo.FinishedTask;
+import com.alibaba.nacossync.pojo.model.ConfigTaskDO;
+import com.alibaba.nacossync.pojo.model.SystemConfigDO;
 import com.alibaba.nacossync.pojo.model.TaskDO;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +36,10 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+import javax.annotation.Resource;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author NacosSync
@@ -49,7 +58,13 @@ public class CleanExceedOperationIdTimer implements CommandLineRunner {
     private final TaskAccessService taskAccessService;
     
     private final ScheduledExecutorService scheduledExecutorService;
-    
+
+    @Resource
+    private SystemConfigAccessService systemConfigAccessService;
+
+    @Resource
+    private ConfigTaskAccessService configTaskAccessService;
+
     public CleanExceedOperationIdTimer(SkyWalkerCacheServices skyWalkerCacheServices,
             TaskAccessService taskAccessService, ScheduledExecutorService scheduledExecutorService) {
         this.skyWalkerCacheServices = skyWalkerCacheServices;
@@ -62,7 +77,16 @@ public class CleanExceedOperationIdTimer implements CommandLineRunner {
         /** Clean up the OperationId cache once every 12 hours */
         scheduledExecutorService.scheduleWithFixedDelay(new CleanExceedOperationIdThread(), INITIAL_DELAY, PERIOD,
                 TimeUnit.HOURS);
-        log.info("CleanExceedOperationIdTimer has started successfully");
+        log.info("CleanExceedOperationIdTimer CleanExceedOperationIdThread has started successfully");
+        SystemConfigDO configSyncSwitch = systemConfigAccessService.findByConfigKey(SkyWalkerConstants.CONFIG_SYNC_ENABLE);
+        if (configSyncSwitch == null || !"1".equals(configSyncSwitch.getConfigValue())) {
+            log.warn("config sync is not switch on");
+            return;
+        }
+
+        scheduledExecutorService.scheduleWithFixedDelay(new ConfigCleanExceedOperationIdThread(), INITIAL_DELAY, PERIOD,
+                TimeUnit.HOURS);
+        log.info("CleanExceedOperationIdTimer ConfigCleanExceedOperationIdThread has started successfully");
         
     }
     
@@ -85,6 +109,29 @@ public class CleanExceedOperationIdTimer implements CommandLineRunner {
         
         private Set<String> getDbOperations(Iterable<TaskDO> taskDOS) {
             return StreamSupport.stream(taskDOS.spliterator(), false).map(TaskDO::getOperationId)
+                    .collect(Collectors.toSet());
+        }
+    }
+
+    private class ConfigCleanExceedOperationIdThread implements Runnable {
+
+        @Override
+        public void run() {
+
+            try {
+
+                Map<String, FinishedTask> finishedTaskMap = skyWalkerCacheServices.getFinishedConfigTaskMap();
+                Set<String> operationIds = getDbOperations(configTaskAccessService.findAll());
+                finishedTaskMap.keySet().removeIf(operationId -> !operationIds.contains(operationId));
+
+            } catch (Exception e) {
+                log.warn("ConfigCleanExceedOperationIdThread Exception", e);
+            }
+
+        }
+
+        private Set<String> getDbOperations(Iterable<ConfigTaskDO> taskDOS) {
+            return StreamSupport.stream(taskDOS.spliterator(), false).map(ConfigTaskDO::getOperationId)
                     .collect(Collectors.toSet());
         }
     }

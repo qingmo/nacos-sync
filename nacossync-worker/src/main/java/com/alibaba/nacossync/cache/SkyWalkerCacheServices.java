@@ -22,6 +22,7 @@ import com.alibaba.nacossync.dao.ClusterAccessService;
 import com.alibaba.nacossync.exception.SkyWalkerException;
 import com.alibaba.nacossync.pojo.FinishedTask;
 import com.alibaba.nacossync.pojo.model.ClusterDO;
+import com.alibaba.nacossync.pojo.model.ConfigTaskDO;
 import com.alibaba.nacossync.pojo.model.TaskDO;
 import com.alibaba.nacossync.util.SkyWalkerUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -43,7 +44,9 @@ import java.util.concurrent.ThreadLocalRandom;
 public class SkyWalkerCacheServices {
     
     private static final Map<String, FinishedTask> FINISHED_TASK_MAP = new ConcurrentHashMap<>();
-    
+
+    private static final Map<String, FinishedTask> FINISHED_CONFIG_TASK_MAP = new ConcurrentHashMap<>();
+
     private final ClusterAccessService clusterAccessService;
 
     private final ObjectMapper objectMapper;
@@ -111,6 +114,40 @@ public class SkyWalkerCacheServices {
 
         return FINISHED_TASK_MAP;
     }
-    
+
+    public void addFinishedConfigTask(ConfigTaskDO configTaskDO) {
+
+        String operationId = SkyWalkerUtil.getOperationId(configTaskDO);
+
+        FinishedTask finishedTask = new FinishedTask();
+        finishedTask.setOperationId(operationId);
+
+        FINISHED_CONFIG_TASK_MAP.put(operationId, finishedTask);
+    }
+
+
+    public FinishedTask getFinishedConfigTask(ConfigTaskDO taskDO) {
+
+        String operationId = SkyWalkerUtil.getOperationId(taskDO);
+
+        if (!StringUtils.hasLength(operationId)) {
+            return null;
+        }
+
+        return FINISHED_CONFIG_TASK_MAP.get(operationId);
+    }
+
+
+    public void removeFinishedConfigTask(String operationId) {
+        if (!StringUtils.hasLength(operationId)) {
+            return;
+        }
+        FINISHED_CONFIG_TASK_MAP.remove(operationId);
+    }
+
+    public Map<String, FinishedTask> getFinishedConfigTaskMap() {
+
+        return FINISHED_CONFIG_TASK_MAP;
+    }
 
 }

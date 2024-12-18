@@ -14,18 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alibaba.nacossync.pojo;
+package com.alibaba.nacossync.pojo.request;
 
 import lombok.Data;
 
 /**
  * @author NacosSync
- * @version $Id: QueryCondition.java, v 0.1 2018年11月06日 AM11:03 NacosSync Exp $
+ * @version $Id: TaskDeleteRequest.java, v 0.1 2018-09-30 PM12:49 NacosSync Exp $$
  */
 @Data
-public class QueryCondition {
-    private Integer id;
-    private String  serviceName;
-    private String  dataId;
-    private String  clusterName;
+public class ConfigTaskDeleteRequest extends BaseRequest {
+    private String taskId;
 }

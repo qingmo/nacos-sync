@@ -23,24 +23,24 @@ public class BatchTaskExecutor {
      * @param items     Task list
      * @param operation Operation to be executed
      */
-    public static void batchOperation(List<TaskDO> items, Consumer<TaskDO> operation) {
+    public static <T> void batchOperation(List<T> items, Consumer<T> operation) {
         Stopwatch stopwatch = Stopwatch.createStarted();
         
-        List<Tuple<Integer, List<TaskDO>>> taskGroupList = averageAssign(items, MAX_THREAD_NUM);
+        List<Tuple<Integer, List<T>>> taskGroupList = averageAssign(items, MAX_THREAD_NUM);
         
         // Create a CompletableFuture for each task group
         CompletableFuture<?>[] futures = taskGroupList.stream().map(tuple -> CompletableFuture.runAsync(() -> {
-            for (TaskDO taskDO : tuple.getT2()) {
+            for (T taskDO : tuple.getT2()) {
                 try {
                     // Add timeout control for each task to avoid long-running tasks
                     CompletableFuture.runAsync(() -> operation.accept(taskDO), executorService)
                             .orTimeout(5, TimeUnit.SECONDS) // Task timeout set to 5 seconds
                             .exceptionally(ex -> {
-                                log.error("Task execution timed out: {}", taskDO.getServiceName(), ex);
+                                log.error("Task execution timed out: {}", taskDO.toString(), ex);
                                 return null;
                             }).join();
                 } catch (Exception e) {
-                    log.error("Error occurred during task execution: {}", taskDO.getServiceName(), e);
+                    log.error("Error occurred during task execution: {}", taskDO.toString(), e);
                 }
             }
         }, executorService)).toArray(CompletableFuture[]::new);

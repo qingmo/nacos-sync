@@ -2,8 +2,10 @@ package com.alibaba.nacossync.util;
 
 import com.alibaba.nacossync.constant.ClusterTypeEnum;
 import com.alibaba.nacossync.constant.SkyWalkerConstants;
+import com.alibaba.nacossync.pojo.model.ConfigTaskDO;
 import com.alibaba.nacossync.pojo.model.TaskDO;
 import com.alibaba.nacossync.pojo.request.ClusterAddRequest;
+import com.alibaba.nacossync.pojo.request.ConfigTaskAddRequest;
 import com.alibaba.nacossync.pojo.request.TaskAddRequest;
 import com.google.common.base.Joiner;
 import org.apache.commons.lang3.StringUtils;
@@ -57,6 +59,17 @@ public class SkyWalkerUtil {
     public static String generateTaskId(TaskAddRequest addTaskRequest) {
         return generateTaskId(addTaskRequest.getServiceName(), addTaskRequest.getGroupName(),
                 addTaskRequest.getSourceClusterId(), addTaskRequest.getDestClusterId());
+    }
+
+    /**
+     * Generates a task ID based on the given TaskAddRequest.
+     *
+     * @param addConfigTaskRequest The ConfigTaskAddRequest containing task details.
+     * @return The generated task ID.
+     */
+    public static String generateConfigTaskId(ConfigTaskAddRequest addConfigTaskRequest) {
+        return generateTaskId(addConfigTaskRequest.getDataId(), addConfigTaskRequest.getGroupName(),
+                addConfigTaskRequest.getSourceClusterId(), addConfigTaskRequest.getDestClusterId());
     }
     
     /**
@@ -128,6 +141,10 @@ public class SkyWalkerUtil {
      * @return The operation ID.
      */
     public static String getOperationId(TaskDO taskDO) {
+        return taskDO.getOperationId();
+    }
+
+    public static String getOperationId(ConfigTaskDO taskDO) {
         return taskDO.getOperationId();
     }
     
