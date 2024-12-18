@@ -60,6 +60,11 @@ public class ConfigTaskDO implements Serializable {
      * data id
      */
     private String dataId;
+
+    /**
+     * content type
+     */
+    private String contentType;
     /**
      * group name
      */

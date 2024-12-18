@@ -16,7 +16,6 @@ package com.alibaba.nacossync.extension.impl;
 import com.google.common.base.Stopwatch;
 
 import com.alibaba.nacos.api.config.ConfigChangeEvent;
-import com.alibaba.nacos.api.config.ConfigChangeItem;
 import com.alibaba.nacos.api.config.ConfigService;
 import com.alibaba.nacos.api.config.listener.Listener;
 import com.alibaba.nacos.api.exception.NacosException;
@@ -217,10 +216,14 @@ public class ConfigSyncNacosToNacosServiceImpl implements ConfigSyncService, Ini
 
         try {
             String config = sourceConfigService.getConfig(configTaskDO.getDataId(), getGroupNameOrDefault(configTaskDO.getGroupName()), 2000);
-            destConfigService.publishConfig(configTaskDO.getDataId(), getGroupNameOrDefault(configTaskDO.getGroupName()), config);
+            destConfigService.publishConfig(configTaskDO.getDataId(), getGroupNameOrDefault(configTaskDO.getGroupName()), config, getContentTypeOrDefault(configTaskDO.getContentType()));
         } finally {
             syncTaskTap.remove(taskId);
         }
+    }
+
+    private String getContentTypeOrDefault(String contentType) {
+        return org.apache.commons.lang3.StringUtils.defaultIfBlank(contentType, "text");
     }
 
 

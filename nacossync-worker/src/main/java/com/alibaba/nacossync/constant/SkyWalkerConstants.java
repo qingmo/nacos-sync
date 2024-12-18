@@ -39,5 +39,9 @@ public class SkyWalkerConstants {
     public static final String NACOS_ALL_SERVICE_NAME = "ALL";
 
     public static final String CONFIG_SYNC_ENABLE = "CONFIG_SYNC_ENABLE";
+    public static  final String DATA_ID_PARAM="dataId";
+    public static  final String GROUP_PARAM="group";
+    public static  final String TENANT_PARAM="tenant";
+    public static  final String SEARCH_PARAM="search";
 
 }

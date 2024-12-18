@@ -31,5 +31,6 @@ public class ConfigTaskAddRequest extends BaseRequest {
     private String dataId;
     private String groupName;
     private String nameSpace;
+    private String contentType;
 
 }

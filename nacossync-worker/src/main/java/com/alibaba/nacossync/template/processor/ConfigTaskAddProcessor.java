@@ -87,6 +87,7 @@ public class ConfigTaskAddProcessor implements Processor<ConfigTaskAddRequest, C
             configTaskDO.setDataId(configTaskAddRequest.getDataId());
             configTaskDO.setGroupName(configTaskAddRequest.getGroupName());
             configTaskDO.setNameSpace(configTaskAddRequest.getNameSpace());
+            configTaskDO.setContentType(configTaskAddRequest.getContentType());
             configTaskDO.setTaskStatus(TaskStatusEnum.SYNC.getCode());
             configTaskDO.setWorkerIp(SkyWalkerUtil.getLocalIp());
             configTaskDO.setOperationId(SkyWalkerUtil.generateOperationId());
