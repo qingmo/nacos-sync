@@ -1,5 +1,6 @@
 package com.alibaba.nacossync.dao;
 
+import com.alibaba.nacossync.constant.SkyWalkerConstants;
 import com.alibaba.nacossync.dao.repository.SystemConfigRepository;
 import com.alibaba.nacossync.pojo.QueryCondition;
 import com.alibaba.nacossync.pojo.model.SystemConfigDO;
@@ -29,5 +30,10 @@ public class SystemConfigAccessService implements PageQueryService<SystemConfigD
     @Override
     public Page<SystemConfigDO> findPageCriteria(Integer pageNum, Integer size, QueryCondition queryCondition) {
         throw new UnsupportedOperationException();
+    }
+
+    public boolean needDeregisterWhenDelete() {
+        SystemConfigDO configKey = this.findByConfigKey(SkyWalkerConstants.DEREGISTER_WHEN_DELETE);
+        return configKey == null || !"0".equals(configKey.getConfigValue());
     }
 }

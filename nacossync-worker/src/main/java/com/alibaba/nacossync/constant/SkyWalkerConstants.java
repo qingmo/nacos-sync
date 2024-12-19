@@ -44,4 +44,5 @@ public class SkyWalkerConstants {
     public static  final String TENANT_PARAM="tenant";
     public static  final String SEARCH_PARAM="search";
 
+    public static final String DEREGISTER_WHEN_DELETE = "DEREGISTER_WHEN_DELETE";
 }

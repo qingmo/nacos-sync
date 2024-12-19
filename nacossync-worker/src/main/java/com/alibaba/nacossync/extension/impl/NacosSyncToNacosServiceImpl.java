@@ -13,6 +13,8 @@
 
 package com.alibaba.nacossync.extension.impl;
 
+import com.google.common.base.Stopwatch;
+
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.listener.EventListener;
@@ -24,6 +26,7 @@ import com.alibaba.nacossync.constant.ClusterTypeEnum;
 import com.alibaba.nacossync.constant.MetricsStatisticsType;
 import com.alibaba.nacossync.constant.SkyWalkerConstants;
 import com.alibaba.nacossync.dao.ClusterAccessService;
+import com.alibaba.nacossync.dao.SystemConfigAccessService;
 import com.alibaba.nacossync.extension.SyncService;
 import com.alibaba.nacossync.extension.annotation.NacosSyncService;
 import com.alibaba.nacossync.extension.holder.NacosServerHolder;
@@ -31,8 +34,7 @@ import com.alibaba.nacossync.monitor.MetricsManager;
 import com.alibaba.nacossync.pojo.model.TaskDO;
 import com.alibaba.nacossync.util.BatchTaskExecutor;
 import com.alibaba.nacossync.util.StringUtils;
-import com.google.common.base.Stopwatch;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -46,6 +48,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
+
+import lombok.extern.slf4j.Slf4j;
 
 import static com.alibaba.nacossync.constant.SkyWalkerConstants.SOURCE_CLUSTER_ID_KEY;
 import static com.alibaba.nacossync.util.NacosUtils.getGroupNameOrDefault;
@@ -74,6 +80,9 @@ public class NacosSyncToNacosServiceImpl implements SyncService, InitializingBea
     private final ClusterAccessService clusterAccessService;
     
     private final SkyWalkerCacheServices skyWalkerCacheServices;
+
+    @Resource
+    private SystemConfigAccessService systemConfigAccessService;
     
     public NacosSyncToNacosServiceImpl(MetricsManager metricsManager, NacosServerHolder nacosServerHolder,
             ClusterAccessService clusterAccessService, SkyWalkerCacheServices skyWalkerCacheServices) {
@@ -171,14 +180,17 @@ public class NacosSyncToNacosServiceImpl implements SyncService, InitializingBea
             if (listener!= null) {
                 sourceNamingService.unsubscribe(taskDO.getServiceName(), getGroupNameOrDefault(taskDO.getGroupName()), listener);
             }
-            List<Instance> sourceInstances = sourceNamingService.getAllInstances(taskDO.getServiceName(),
-                    getGroupNameOrDefault(taskDO.getGroupName()), new ArrayList<>(), false);
-            
-            NamingService destNamingService = nacosServerHolder.get(taskDO.getDestClusterId());
-            for (Instance instance : sourceInstances) {
-                if (needSync(instance.getMetadata(), level, taskDO.getDestClusterId())) {
-                    destNamingService.deregisterInstance(taskDO.getServiceName(),
-                            getGroupNameOrDefault(taskDO.getGroupName()), instance);
+            boolean needDeregister = systemConfigAccessService.needDeregisterWhenDelete();
+            if (needDeregister) {
+                List<Instance> sourceInstances = sourceNamingService.getAllInstances(taskDO.getServiceName(),
+                        getGroupNameOrDefault(taskDO.getGroupName()), new ArrayList<>(), false);
+
+                NamingService destNamingService = nacosServerHolder.get(taskDO.getDestClusterId());
+                for (Instance instance : sourceInstances) {
+                    if (needSync(instance.getMetadata(), level, taskDO.getDestClusterId())) {
+                        destNamingService.deregisterInstance(taskDO.getServiceName(),
+                                getGroupNameOrDefault(taskDO.getGroupName()), instance);
+                    }
                 }
             }
             // Remove all tasks that need to be synchronized.
