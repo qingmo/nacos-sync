@@ -44,3 +44,24 @@ CREATE TABLE `task` (
   `status` int default null ,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+CREATE TABLE `config_task` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `data_id` varchar(255) DEFAULT NULL,
+  `dest_cluster_id` varchar(255) DEFAULT NULL,
+  `group_name` varchar(255) DEFAULT NULL,
+  `name_space` varchar(255) DEFAULT NULL,
+  `operation_id` varchar(255) DEFAULT NULL,
+  `source_cluster_id` varchar(255) DEFAULT NULL,
+  `task_id` varchar(255) DEFAULT NULL,
+  `task_status` varchar(255) DEFAULT NULL,
+  `worker_ip` varchar(255) DEFAULT NULL,
+  `content_type` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=436 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+
+INSERT INTO system_config
+(config_desc, config_key, config_value)
+VALUES('开启配置同步', 'CONFIG_SYNC_ENABLE', '1'),
+('在删除时需要执行注销动作', 'DEREGISTER_WHEN_DELETE', '0');
